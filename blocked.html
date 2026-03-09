@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Site Blocked - ChronoFocus</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            padding-top: 15vh; 
+            background: #ffeccf; 
+            color: #ef4444; 
+            margin: 0;
+        }
+        h1 { font-size: 64px; margin-bottom: 10px; font-weight: 800; }
+        p { font-size: 24px; color: #475569; margin: 10px; }
+        .emoji { font-size: 100px; margin-bottom: 20px; display: inline-block; animation: shake 0.5s infinite; }
+        .domain { font-weight: bold; background: #ffc2c2; color: #b91c1c; padding: 4px 12px; border-radius: 8px; }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="emoji">🛑</div>
+    <h1>HOLD UP!</h1>
+    <p>You specifically told ChronoFocus to block <span class="domain" id="domain">this site</span>.</p>
+    <p>Close this tab, get back to work, and boost that Productivity Score! 🚀</p>
+    
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        let domainStr = params.get('domain') || 'this site';
+        document.getElementById('domain').textContent = domainStr;
+    </script>
+</body>
+</html>

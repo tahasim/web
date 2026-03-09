@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            width: 380px;
+            margin: 0;
+            padding: 20px;
+            background: #ffffff;
+            color: #1e293b;
+            border-radius: 16px;
+        }
+        
+        .header { display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-weight: 900; font-size: 24px; color: #3b82f6; }
+        .header img { width: 32px; height: 32px; margin-right: 10px; border-radius: 8px; }
+
+        .nav { display: flex; gap: 6px; margin-bottom: 20px; }
+        .nav-btn {
+            flex: 1; padding: 8px 4px; text-align: center; background: #f1f5f9; border-radius: 10px;
+            cursor: pointer; font-weight: 800; border: 2px solid transparent; transition: 0.2s; color: #64748b; font-size: 13px;
+        }
+        .nav-btn:hover { background: #e2e8f0; }
+        .nav-btn.active { background: #eff6ff; color: #3b82f6; border-color: #3b82f6; }
+        
+        /* Dashboard Theme */
+        .score-card {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 20px; padding: 20px; text-align: center; color: white;
+            margin-bottom: 20px; box-shadow: 0 10px 15px -3px rgba(236,72,153,0.3);
+            position: relative; overflow: hidden;
+        }
+        .score-card h2 { margin: 0; font-size: 16px; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
+        .score-circle {
+            width: 80px; height: 80px; background: white; border-radius: 50%;
+            margin: 15px auto; display: flex; align-items: center; justify-content: center;
+            font-size: 40px; font-weight: 900; color: #ec4899;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1), inset 0 2px 5px rgba(255,100,200,0.2);
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+        
+        .chart-box { height: 200px; margin-bottom: 20px; }
+        
+        .site-list { list-style: none; padding: 0; margin: 0 0 20px 0; max-height: 120px; overflow-y: auto; }
+        .site-item { display: flex; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid #f1f5f9; font-size: 14px; border-radius: 8px; }
+        .site-item:hover { background: #f8fafc; }
+        .domain-name { font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .domain-time { color: #64748b; font-weight: 800; text-align: right;}
+        .dot { width: 10px; height: 10px; border-radius: 5px; flex-shrink: 0;}
+        
+        .btn-export {
+            width: 100%; padding: 14px; background: #10b981; color: white; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+            box-shadow: 0 4px 10px rgba(16,185,129,0.3); transition: 0.2s;
+        }
+        .btn-export:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(16,185,129,0.4); }
+        
+        /* Settings Theme & Other Views */
+        .settings-view { display: none; }
+        h3 { margin: 0 0 10px 0; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
+        .input-group input { 
+            flex: 1; padding: 10px 15px; border: 2px solid #e2e8f0; border-radius: 10px;
+            font-family: 'Nunito', sans-serif; font-weight: 700; outline: none; background: #f8fafc;
+        }
+        .input-group input:focus { border-color: #3b82f6; background: white; }
+        
+        .btn-add-wl { background: #10b981; color: white; border: none; padding: 0 16px; border-radius: 10px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 5px rgba(16,185,129,0.3); }
+        .btn-add-bl { background: #ef4444; color: white; border: none; padding: 0 16px; border-radius: 10px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 5px rgba(239,68,68,0.3); }
+        .btn-add-wl:hover, .btn-add-bl:hover { filter: brightness(1.1); }
+        
+        .list-box { background: #f8fafc; border-radius: 12px; padding: 10px; margin-bottom: 25px; min-height: 40px; max-height: 120px; overflow-y: auto; border: 1px solid #e2e8f0; }
+        .list-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 14px; font-weight: 700; color: #334155; }
+        .list-item:last-child { border-bottom: none; }
+        .remove-btn { color: #ef4444; cursor: pointer; font-weight: 900; background: #fee2e2; width: 20px; height: 20px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .remove-btn:hover { background: #ef4444; color: white; }
+        
+        /* Surprise Canvas */
+        #confetti { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; display: none; }
+    </style>
+</head>
+<body>
+    <canvas id="confetti"></canvas>
+    
+    <div class="header">
+        <img src="icon.png" alt="Logo" onerror="this.src=''; this.style.display='none'">
+        ChronoFocus
+    </div>
+
+    <div class="nav">
+        <div class="nav-btn active" id="tab-dashboard">Dashboard 📈</div>
+        <div class="nav-btn" id="tab-history">History 📅</div>
+        <div class="nav-btn" id="tab-settings">Filter ⚡</div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="view-dashboard">
+        <div class="score-card" id="score-card">
+            <h2>Activity Score</h2>
+            <div class="score-circle" id="score-text">--</div>
+            <div style="font-size: 14px; margin-top: 5px; font-weight: 700; opacity: 0.9;">Visit whitelisted sites to rank up!</div>
+        </div>
+        
+        <div class="chart-box">
+            <canvas id="productivityChart"></canvas>
+        </div>
+        
+        <ul class="site-list" id="site-list"></ul>
+        
+        <button class="btn-export" id="btn-export">📥 Export Report to File</button>
+    </div>
+
+    <!-- CALENDAR HISTORY -->
+    <div id="view-history" class="settings-view">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <input type="date" id="date-picker" style="padding: 10px 15px; border-radius: 10px; border: 2px solid #e2e8f0; font-family: 'Nunito', sans-serif; font-weight: 800; width: 70%; cursor: pointer; color: #3b82f6; outline: none;">
+        </div>
+        
+        <div id="history-content" style="display: none;">
+            <div class="score-card" style="background: linear-gradient(135deg, #10b981, #3b82f6); box-shadow: 0 10px 15px -3px rgba(59,130,246,0.3);">
+                <h2>Historical Score</h2>
+                <div class="score-circle" id="hist-score-text" style="color: #3b82f6;">--</div>
+            </div>
+            
+            <div class="chart-box">
+                <canvas id="historyChart"></canvas>
+            </div>
+            
+            <ul class="site-list" id="hist-site-list"></ul>
+            
+            <button class="btn-export" id="btn-export-hist" style="background: #3b82f6; box-shadow: 0 4px 10px rgba(59,130,246,0.3);">📥 Export Date Data</button>
+        </div>
+        
+        <div id="hist-no-data" style="text-align: center; color: #64748b; padding: 40px 0; font-size: 16px; font-weight: 700;">
+            <div style="font-size: 48px; margin-bottom: 10px;">👻</div>
+            No data recorded for this date.
+        </div>
+    </div>
+
+    <!-- SETTINGS / FILTERS -->
+    <div id="view-settings" class="settings-view">
+        <h3 style="color:#10b981;">✅ Productive Sites (Whitelist)</h3>
+        <p style="font-size: 12px; color: #64748b; margin-top: -5px;">These boost your Activity Score.</p>
+        <div class="input-group">
+            <input type="text" id="wl-input" placeholder="e.g. github.com">
+            <button class="btn-add-wl" id="btn-wl">Add</button>
+        </div>
+        <div class="list-box" id="wl-list"></div>
+
+        <h3 style="color:#ef4444;">🛑 Distracting Sites (Blacklist)</h3>
+        <p style="font-size: 12px; color: #64748b; margin-top: -5px;">These will be instantly blocked.</p>
+        <div class="input-group">
+            <input type="text" id="bl-input" placeholder="e.g. facebook.com">
+            <button class="btn-add-bl" id="btn-bl">Block</button>
+        </div>
+        <div class="list-box" id="bl-list"></div>
+    </div>
+
+    <script src="chart.min.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>
